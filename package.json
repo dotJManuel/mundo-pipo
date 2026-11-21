@@ -1,0 +1,17 @@
+{
+  "name": "mundo-pipo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Juego de scroll narrativo que empieza infantil y se corrompe hacia el terror.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

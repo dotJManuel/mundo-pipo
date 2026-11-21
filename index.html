@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mundo Pipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400..700&family=Manrope:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body class="title lock">
+
+<!-- ================= OVERLAYS ================= -->
+<div id="bigeye" class="ov" aria-hidden="true">
+  <svg viewBox="-220 -110 440 220">
+    <defs><clipPath id="almond"><path d="M-200 0 Q0 -150 200 0 Q0 150 -200 0Z"/></clipPath>
+      <radialGradient id="sclera"><stop offset="0" stop-color="#e9dfcf"/><stop offset=".8" stop-color="#c9b9a2"/><stop offset="1" stop-color="#6b4c3c"/></radialGradient></defs>
+    <g class="lidg">
+      <path d="M-200 0 Q0 -150 200 0 Q0 150 -200 0Z" fill="url(#sclera)"/>
+      <g clip-path="url(#almond)" stroke="#8a1a12" stroke-width="1.4" fill="none" opacity=".7"><path d="M-200 5 q40 -10 70 8 t50 -4"/><path d="M200 -6 q-40 12 -66 -6 t-44 10"/><path d="M-180 -30 q30 10 50 0"/><path d="M170 34 q-30 -8 -52 6"/></g>
+      <g id="bigIris" clip-path="url(#almond)"><circle r="62" fill="#3d5a2a"/><circle r="62" fill="none" stroke="#1a2410" stroke-width="8"/><circle r="30" fill="#000"/><circle cx="-16" cy="-18" r="7" fill="#fff" opacity=".6"/></g>
+      <path d="M-200 0 Q0 -150 200 0 Q0 150 -200 0Z" fill="none" stroke="#1a0806" stroke-width="6"/>
+    </g>
+  </svg>
+</div>
+<div id="night" class="ov"></div><div id="red" class="ov"></div><div id="static" class="ov"></div>
+<div id="grain" class="ov"></div><div id="vig" class="ov"></div><div id="flick" class="ov"></div>
+<div id="flash" class="ov" aria-hidden="true">
+  <svg viewBox="0 0 400 500"><defs><radialGradient id="ff" cx="50%" cy="40%"><stop offset="0" stop-color="#bdb6aa"/><stop offset=".6" stop-color="#5d574f"/><stop offset="1" stop-color="#000"/></radialGradient><filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter></defs>
+    <g filter="url(#blur3)"><ellipse cx="200" cy="240" rx="120" ry="170" fill="url(#ff)"/><ellipse cx="155" cy="210" rx="28" ry="38" fill="#000"/><ellipse cx="245" cy="210" rx="28" ry="38" fill="#000"/><ellipse cx="200" cy="330" rx="34" ry="52" fill="#000"/></g></svg>
+</div>
+<div id="peek" aria-hidden="true"><svg viewBox="215 60 170 260"><use href="#cHead"/></svg></div>
+
+<!-- ================= TITLE SCREEN ================= -->
+<div id="title" role="dialog" aria-label="Pantalla de inicio">
+  <div class="cl" style="top:12%;animation-delay:-8s"></div><div class="cl" style="top:26%;animation-delay:-22s;scale:.7"></div><div class="cl" style="top:70%;animation-delay:-3s;scale:.8"></div>
+  <div class="tbox">
+    <div id="tPipo" class="pipoArt" aria-hidden="true"></div>
+    <h1 class="tname">MUNDO <b>PIPO</b></h1>
+    <p class="tsub" id="tSub">Una aventura hacia abajo</p>
+    <ul class="howto">
+      <li><span class="hi"><svg viewBox="0 0 40 40"><rect x="12" y="4" width="16" height="26" rx="8" fill="#fff" stroke="#2a2350" stroke-width="2.5"/><rect x="18.5" y="9" width="3" height="7" rx="1.5" fill="#ff4f8b"/><path d="M14 32l6 6 6-6" stroke="#ff4f8b" stroke-width="3" fill="none" stroke-linecap="round"/></svg></span>Baja con la rueda del ratón o deslizando el dedo</li>
+      <li><span class="hi"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="13" fill="#ffcf3f"/><circle cx="15" cy="18" r="2.4" fill="#2a2350"/><circle cx="25" cy="18" r="2.4" fill="#2a2350"/><path d="M4 20h-1M37 20h-1M6 16l-3 4 3 4M34 16l3 4-3 4" stroke="#2a2350" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></span>Mueve el ratón o tu dedo para guiar a Pipo</li>
+      <li><span class="hi"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z" fill="#ffc93c" stroke="#e59a00" stroke-width="1.2"/></svg></span>Atrapa todas las estrellas que puedas</li>
+    </ul>
+    <button class="btn big" type="button" id="tPlay">▶ JUGAR</button>
+    <p class="twarn">Mejor con audífonos · contiene luces intermitentes</p>
+  </div>
+</div>
+
+<!-- ================= HUD / DIALOGUE / BANNER / SPRITE ================= -->
+<div id="hud">
+  <div class="pill"><span id="hearts"></span><span class="sc"><svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z" fill="#ffc93c" stroke="#e59a00" stroke-width="1.2"/></svg><b id="score">0</b></span></div>
+  <div class="pill mid"><b id="lvName">NIVEL 1 · EL CIELO</b><span id="depth">0 m</span></div>
+  <button class="pill" id="snd" aria-pressed="false" aria-label="Sonido"><span class="bars"><i></i><i></i><i></i></span><span id="sndLabel">Sonido</span></button>
+</div>
+<div id="dlg" role="status" aria-live="polite"><div id="dlgPic">P</div><div><div id="dlgWho">PIPO</div><div id="dlgTxt"></div></div></div>
+<div id="banner" aria-hidden="true"><div><b id="bnNum">NIVEL 1</b><span id="bnName">El cielo</span></div></div>
+<div id="sprite" aria-hidden="true"><div class="inner pipoArt" id="spriteArt"></div></div>
+
+<div id="cur" aria-hidden="true">
+  <div class="ring"></div><div class="dot"></div>
+  <svg class="ceye" viewBox="-50 -30 100 60"><defs><clipPath id="ceClip"><path d="M-46 0 Q0 -36 46 0 Q0 36 -46 0Z"/></clipPath></defs>
+    <g class="eyeg"><path d="M-46 0 Q0 -36 46 0 Q0 36 -46 0Z" fill="#e6dcc8"/>
+      <g clip-path="url(#ceClip)"><g id="curIris"><circle r="15" fill="#6b1d12"/><circle r="7" fill="#000"/><circle cx="-4" cy="-4" r="2.4" fill="#fff" opacity=".8"/></g>
+        <path d="M-46 4 q14 -4 22 3 M40 -6 q-12 6 -20 -2" stroke="#9a1c12" stroke-width="1.2" fill="none"/></g>
+      <path d="M-46 0 Q0 -36 46 0 Q0 36 -46 0Z" fill="none" stroke="#1d0a08" stroke-width="3"/></g></svg>
+</div>
+
+<div id="scare" aria-hidden="true">
+  <svg class="face" viewBox="215 95 170 220" preserveAspectRatio="xMidYMid meet"><rect x="0" y="0" width="600" height="1100" fill="#000"/><use href="#cHead"/></svg>
+  <svg class="g1" viewBox="215 95 170 220" preserveAspectRatio="xMidYMid meet" style="filter:url(#tintR)"><use href="#cHead"/></svg>
+  <svg class="g2" viewBox="215 95 170 220" preserveAspectRatio="xMidYMid meet" style="filter:url(#tintC)"><use href="#cHead"/></svg>
+  <div class="white"></div>
+</div>
+
+<!-- ================= THE WORLD ================= -->
+<main id="world">
+<div id="stars" aria-hidden="true"></div>
+
+<!-- NIVEL 1 · EL CIELO (bonito y normal) -->
+<section class="lvl" id="L1" style="height:330vh">
+  <div class="layer skyL"></div>
+  <div class="cloud at" style="top:8vh;left:6%"></div><div class="cloud at" style="top:44vh;right:8%;scale:.8"></div>
+  <div class="cloud at" style="top:96vh;left:62%;scale:1.2"></div><div class="cloud at" style="top:150vh;left:4%;scale:.9"></div>
+  <div class="cloud at" style="top:210vh;right:4%"></div><div class="cloud at" style="top:270vh;left:30%;scale:.7"></div>
+  <div class="balloon at" style="top:70vh;left:14%;background:#ff7aa8"></div><div class="balloon at" style="top:180vh;right:12%;background:#6cc6ff"></div>
+  <div class="balloon at" style="top:250vh;left:20%;background:#ffc93c"></div>
+  <div class="sign at" style="top:34vh;left:6%">← → Mueve el ratón (o tu dedo) para guiar a Pipo</div>
+  <div class="sign at" style="top:118vh;right:6%">★ Pasa por las estrellas para atraparlas</div>
+  <div class="at" style="top:80vh" data-say="PIPO|¡Muy bien! ¡Así se hace!"></div>
+  <div class="sign at" style="top:200vh;left:8%">¡Sigue bajando! Abajo hay más amigos</div>
+  <div class="at" style="top:170vh" data-say="PIPO|¡Mira cuántas estrellas! ¡Vas genial!"></div>
+  <div class="at" style="top:285vh" data-say="PIPO|¡Ya casi llegamos al bosque! Ahí viven mis amigos."></div>
+</section>
+
+<div id="m2"></div>
+<!-- NIVEL 2 · EL BOSQUE (algo no está bien) -->
+<section class="lvl" id="L2" style="height:520vh">
+  <div class="layer forestL"></div>
+  <div class="tree at" style="top:20vh;left:-30px"></div><div class="tree at" style="top:60vh;right:-20px;scale:1.2"></div>
+  <div class="tree at" style="top:150vh;left:-10px;scale:1.4"></div><div class="tree at" style="top:240vh;right:-30px"></div>
+  <div class="tree at" style="top:330vh;left:-40px;scale:1.1"></div><div class="tree at" style="top:410vh;right:-10px;scale:1.5"></div>
+
+  <div class="plat at" style="top:72vh;left:6%;width:220px"></div>
+  <div class="npc at" style="top:72vh;left:calc(6% + 35px);transform:translateY(-100%)" data-say="LOLA|¡Hola! ¿También vas para abajo? Yo bajé una vez. Una vez.">
+    <svg viewBox="0 0 240 260"><path d="M72 108 L80 48 L112 92Z M168 108 L160 48 L128 92Z" fill="#ffb0cb"/><path d="M80 98 L84 64 L102 90Z M160 98 L156 64 L138 90Z" fill="#ff7aa8"/>
+      <ellipse cx="120" cy="215" rx="58" ry="45" fill="#ff7aa8"/><ellipse cx="120" cy="140" rx="56" ry="50" fill="#ffb0cb"/>
+      <g class="pe"><circle cx="100" cy="134" r="7" fill="#2a2350"/><circle cx="140" cy="134" r="7" fill="#2a2350"/></g>
+      <path d="M114 152 h12 l-6 7z" fill="#c2406e"/><path d="M106 164 q14 10 28 0" stroke="#c2406e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M60 150 h-26 M60 160 h-24 M180 150 h26 M180 160 h24" stroke="#c2406e" stroke-width="2"/></svg><span>Lola</span></div>
+
+  <div class="sign at" style="top:140vh;right:7%" ><span data-c=".18">Sigue bajando. Sigue bajando.</span></div>
+
+  <div class="plat at" style="top:200vh;right:6%;width:220px"></div>
+  <div class="npc at" style="top:200vh;right:calc(6% + 35px);transform:translateY(-100%)" data-say="BRUNO|No bajes tan rápido. Él escucha cuando bajas.">
+    <svg viewBox="0 0 240 260"><circle cx="76" cy="90" r="22" fill="#b97c4c"/><circle cx="164" cy="90" r="22" fill="#b97c4c"/><circle cx="76" cy="90" r="11" fill="#e8b98e"/><circle cx="164" cy="90" r="11" fill="#e8b98e"/>
+      <ellipse cx="120" cy="222" rx="62" ry="42" fill="#5aa9e6"/><circle cx="120" cy="140" r="58" fill="#c58b5a"/><ellipse cx="120" cy="162" rx="28" ry="22" fill="#eac39c"/>
+      <g class="pe"><circle cx="98" cy="130" r="7" fill="#2a2350"/><circle cx="142" cy="130" r="7" fill="#2a2350"/></g>
+      <ellipse cx="120" cy="154" rx="9" ry="6" fill="#3b2418"/><path d="M110 170 q10 8 20 0" stroke="#3b2418" stroke-width="3" fill="none" stroke-linecap="round"/></svg><span>Bruno</span></div>
+
+  <div class="note at" style="top:262vh;left:7%" data-say="???|Elena también atrapaba estrellas."><small>NOTA ENCONTRADA</small>Llevo aquí mucho tiempo. Ya no me acuerdo de qué color es la puerta de mi casa.<br>— Elena, 8 años · 1987</div>
+
+  <div class="plat at" style="top:338vh;left:38%;width:240px"></div>
+  <div class="npc at" style="top:338vh;left:calc(38% + 45px);transform:translateY(-100%)" data-say="TITO|...||TITO|Siempre he estado aquí.">
+    <svg viewBox="0 0 240 260"><ellipse cx="120" cy="225" rx="56" ry="40" fill="#6cc36c"/>
+      <g class="turn" id="tito"><ellipse cx="96" cy="60" rx="14" ry="44" fill="#f1ead8"/><ellipse cx="144" cy="60" rx="14" ry="44" fill="#f1ead8"/><ellipse cx="120" cy="142" rx="50" ry="56" fill="#f1ead8"/>
+      <g class="pe" id="titoEyes" style="opacity:0"><circle cx="102" cy="138" r="6" fill="#000"/><circle cx="138" cy="138" r="6" fill="#000"/></g></g></svg><span data-c=".3">Tito</span></div>
+
+  <div class="note at r" style="top:410vh;right:7%"><small>NOTA ENCONTRADA</small>Atrapé todas las estrellas. Todas. Pero el contador sigue diciendo que me falta una.<br>— Leo, 7 años</div>
+  <div class="sign at" style="top:470vh;left:9%"><span data-c=".3">Salta una vez. Salta. Salta otra vez. Junta la estrella.</span></div>
+  <div class="at" style="top:480vh" data-say="PIPO|Ahora vamos al sótano. Te va a encantar el sótano, amigo."></div>
+</section>
+
+<div id="m3"></div>
+<!-- NIVEL 3 · EL SÓTANO (inquietante) -->
+<section class="lvl" id="L3" style="height:580vh">
+  <div class="layer pipesL"></div>
+  <div class="drip at" style="top:0;left:12%;height:90px"></div><div class="drip at" style="top:0;left:47%;height:160px"></div><div class="drip at" style="top:0;right:20%;height:60px"></div>
+  <div class="rules at" style="top:40vh">
+    <h2 class="gl" data-t="LAS REGLAS CAMBIARON" style="margin:0;font:700 clamp(30px,5vw,56px)/1 var(--game)">LAS REGLAS CAMBIARON</h2>
+    <ol><li data-c=".42">Entras.</li><li data-c=".44">Juegas.</li><li data-c=".46">Te quedas.</li><li data-c=".47">Te quedas.</li><li class="whisp" data-c=".48">Ya no recuerdas la regla uno.</li></ol>
+  </div>
+  <h2 class="wall at gl crawl" style="top:160vh" data-t="PODEMOS VERTE BAJANDO.">PODEMOS VERTE BAJANDO.</h2>
+  <p class="at whisp" style="top:calc(160vh + 2.6em);left:0;right:0;text-align:center;font-size:clamp(20px,2.4vw,28px);color:var(--mu);margin-top:110px">Vas más lento en las partes que te gustan. Nos dimos cuenta.</p>
+
+  <div class="stats at" style="top:250vh">
+    <h3>ESTADÍSTICAS DEL JUGADOR</h3>
+    <div><span>jugador</span><span id="pV">tú</span></div>
+    <div><span>posición del cursor</span><span id="pC">—</span></div>
+    <div><span>tiempo jugando</span><span id="pT">—</span></div>
+    <div><span>tu hora local</span><span id="pL">—</span></div>
+    <div><span>vidas</span><span id="pH">3</span></div>
+    <div><span>otros jugadores en la sala</span><span id="pO">1</span></div>
+  </div>
+
+  <div class="badpipo at" style="top:350vh" aria-hidden="true" data-say="PIPO?|Ese que baja contigo no soy yo.||PIPO|No le hagas caso. Sigue bajando, amigo.">
+    <svg viewBox="0 0 400 420">
+      <defs><radialGradient id="badB" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#bdb282"/><stop offset=".6" stop-color="#7d7140"/><stop offset="1" stop-color="#2e2914"/></radialGradient></defs>
+      <ellipse cx="118" cy="92" rx="34" ry="64" fill="#7d7140" transform="rotate(-18 118 92)"/>
+      <path d="M262 70 q20 -26 44 4 l-18 50z" fill="#6b6034"/>
+      <circle cx="200" cy="225" r="155" fill="url(#badB)"/><ellipse cx="200" cy="305" rx="92" ry="62" fill="#a39a74"/>
+      <path d="M150 270 v70 M138 282 h24 M138 300 h24 M138 318 h24" stroke="#2a1d10" stroke-width="3"/>
+      <ellipse cx="150" cy="185" rx="38" ry="44" fill="#050303"/><ellipse cx="250" cy="185" rx="38" ry="44" fill="#050303"/>
+      <path d="M140 225 q-4 30 2 60 M262 226 q3 22 -1 40" stroke="#3a0505" stroke-width="5" stroke-linecap="round" fill="none" opacity=".85"/>
+      <circle class="bpp" cx="150" cy="188" r="3.5" fill="#f2ecdc"/><circle class="bpp" cx="250" cy="188" r="3.5" fill="#f2ecdc"/>
+      <path d="M110 245 Q200 335 290 245 Q200 292 110 245Z" fill="#120505"/><g id="bpTeeth"></g>
+    </svg>
+  </div>
+
+  <span class="scat at" style="top:450vh;left:8%;--fs:22px">regresa</span><span class="scat at" style="top:440vh;left:58%">está debajo de todo</span>
+  <span class="scat at" style="top:470vh;left:30%;--fs:15px">ayuda</span><span class="scat at" style="top:478vh;left:76%;--fs:26px">no mires abajo</span>
+  <span class="scat at" style="top:495vh;left:12%;--fs:17px">yo también jugaba aquí</span><span class="scat at" style="top:500vh;left:52%;--fs:30px">sonríe</span>
+  <h2 class="wall sm at gl" style="top:530vh" data-t="DEJA DE MIRAR EL FINAL DE LA PÁGINA.">DEJA DE MIRAR EL FINAL DE LA PÁGINA.</h2>
+</section>
+
+<div id="m4"></div>
+<!-- NIVEL 4 · ABAJO (terror) -->
+<section class="lvl" id="L4" style="height:470vh;background:#030202">
+  <p class="dline at" style="top:30vh">Aquí abajo está oscuro. No pasa nada. No necesitas ver.</p>
+  <div class="at" style="top:80vh" data-say="PIPO|Desde aquí bajas solo, amigo. Yo me quedo."></div>
+  <p class="dline at" style="top:130vh">Mundo Pipo nunca fue un juego. Era un cuarto. Has estado dentro todo este tiempo.</p>
+  <p class="dline at crawl" style="top:210vh">¿Te acuerdas de Elena? ¿De Leo? Nunca dejaron de jugar.</p>
+  <p class="dline at" style="top:290vh">Hay algo al final de esta página.</p>
+  <p class="dline at" style="top:360vh" id="knowsName">Te está esperando desde que llegaste. Sabe cómo te llamas.</p>
+  <p class="dline small at" style="top:440vh">más despacio</p>
+</section>
+
+<section id="lair" aria-label="Algo en la oscuridad">
+  <div class="stick">
+    <svg id="creature" viewBox="0 0 600 1100" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+      <defs>
+        <radialGradient id="skin" cx="50%" cy="34%" r="65%"><stop offset="0" stop-color="#ddd5c6"/><stop offset=".55" stop-color="#9a9183"/><stop offset="1" stop-color="#2b2622"/></radialGradient>
+        <linearGradient id="bodyG" x1="0" x2="1"><stop offset="0" stop-color="#2a2521"/><stop offset=".5" stop-color="#a59b8b"/><stop offset="1" stop-color="#231f1b"/></linearGradient>
+        <linearGradient id="armG" x1="0" x2="1"><stop offset="0" stop-color="#3a342e"/><stop offset=".6" stop-color="#968c7d"/><stop offset="1" stop-color="#2a2521"/></linearGradient>
+        <radialGradient id="sock"><stop offset=".45" stop-color="#030202"/><stop offset="1" stop-color="#030202" stop-opacity="0"/></radialGradient>
+        <linearGradient id="fadeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".55" stop-color="#fff"/><stop offset=".97" stop-color="#000"/></linearGradient>
+        <mask id="bodyMask"><rect width="600" height="1100" fill="url(#fadeG)"/></mask>
+        <filter id="glow"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="tintR"><feColorMatrix values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/></filter>
+        <filter id="tintC"><feColorMatrix values="0 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter>
+        <g id="arm">
+          <path d="M200 395 C178 470 160 560 156 640 C150 740 136 820 128 900 L148 902 C157 820 172 740 179 650 C187 560 206 480 224 410Z" fill="url(#armG)"/>
+          <circle cx="163" cy="642" r="11" fill="#7c7366"/>
+          <path d="M120 896 C114 930 119 952 132 964 C145 955 153 930 150 898Z" fill="#8a8173"/>
+          <g stroke="#8a8173" stroke-linecap="round" fill="none">
+            <path d="M123 948 Q110 1000 114 1062" stroke-width="5.5"/><path d="M131 958 Q124 1016 129 1080" stroke-width="5.5"/>
+            <path d="M140 958 Q143 1016 147 1072" stroke-width="5"/><path d="M148 946 Q161 995 163 1046" stroke-width="4.5"/><path d="M150 910 Q169 936 171 968" stroke-width="5"/>
+          </g>
+        </g>
+      </defs>
+
+      <g id="cAll" opacity="0">
+      <g mask="url(#bodyMask)">
+        <use href="#arm"/>
+        <use href="#arm" transform="translate(600 0) scale(-1 1) rotate(-2 200 395)"/>
+        <!-- neck & torso -->
+        <path d="M284 296 C282 330 278 352 268 374 L332 374 C322 352 318 330 316 296Z" fill="#8a8173"/>
+        <path d="M300 360 C265 362 225 372 196 392 C182 402 176 420 182 440 C196 500 228 560 246 640 C256 700 262 760 270 840 L330 840 C338 760 344 700 354 640 C372 560 404 500 418 440 C424 420 418 402 404 392 C375 372 335 362 300 360Z" fill="url(#bodyG)"/>
+        <g stroke="#1b1714" stroke-width="3" fill="none" opacity=".45" id="ribs"></g>
+        <path d="M220 402 Q260 392 296 406 M380 402 Q340 392 304 406 M300 410 V600" stroke="#2b2520" stroke-width="2.5" fill="none" opacity=".6"/>
+      </g>
+
+      <!-- head (also used by the jump scare) -->
+      <g id="cHeadT">
+        <g id="cHead">
+          <path d="M300 70 C352 70 382 120 380 185 C378 250 350 300 300 312 C250 300 222 250 220 185 C218 120 248 70 300 70Z" fill="url(#skin)"/>
+          <ellipse cx="300" cy="110" rx="50" ry="28" fill="#fff" opacity=".08"/>
+          <ellipse cx="268" cy="180" rx="34" ry="38" fill="url(#sock)"/><ellipse cx="332" cy="180" rx="34" ry="38" fill="url(#sock)"/>
+          <ellipse cx="268" cy="180" rx="20" ry="27" fill="#040202" transform="rotate(-14 268 180)"/>
+          <ellipse cx="332" cy="180" rx="20" ry="27" fill="#040202" transform="rotate(14 332 180)"/>
+          <circle class="cp" cx="268" cy="182" r="3.2" fill="#f2ecdc" filter="url(#glow)"/>
+          <circle class="cp" cx="332" cy="182" r="3.2" fill="#f2ecdc" filter="url(#glow)"/>
+          <path d="M293 226 l-3 9 M307 226 l3 9" stroke="#2b2420" stroke-width="2.4" stroke-linecap="round"/>
+          <!-- the smile: far too wide, far too many teeth -->
+          <path d="M226 232 C250 262 275 272 300 272 C325 272 350 262 374 232 C352 280 328 294 300 294 C272 294 248 280 226 232Z" fill="#0b0505"/>
+          <g id="teeth"></g>
+          <path d="M226 232 q-9 -10 -7 -26 M374 232 q9 -10 7 -26 M228 236 q-10 4 -16 14 M372 236 q10 4 16 14" stroke="#3a2f29" stroke-width="1.6" fill="none"/>
+        </g>
+      </g>
+      </g>
+      <!-- eye glints live above the shade, so they're the first thing you see -->
+      <g id="glints"><circle class="cp2" cx="268" cy="182" r="2.4" fill="#f2ecdc" filter="url(#glow)" opacity="0"/><circle class="cp2" cx="332" cy="182" r="2.4" fill="#f2ecdc" filter="url(#glow)" opacity="0"/></g>
+    </svg>
+    <div class="fog"></div>
+  </div>
+</section>
+
+<section id="end">
+  <div>
+    <h2 class="go" id="go">FIN DEL JUEGO</h2>
+    <p class="line">Gracias por jugar en Mundo Pipo.</p>
+    <p class="line red">No es cierto.</p>
+    <p class="line">Puedes cerrar la pestaña. Ya conoce el camino a las demás.</p>
+    <p class="line" id="goodnight">Buenas noches.</p>
+    <div id="cont"><b>¿CONTINUAR?</b><span id="cd">9</span><div class="row"><button class="btn" id="yes1" type="button">SÍ</button><button class="btn ghost" id="yes2" type="button">NO</button></div></div>
+    <footer>© Mundo Pipo · Todos los jugadores se quedan.</footer>
+  </div>
+</section>
+</main>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
