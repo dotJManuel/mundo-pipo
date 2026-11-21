@@ -173,14 +173,45 @@ export const Audio = (() => {
   }
   function scare() {
     if (!ctx || !on) return; const t = ctx.currentTime;
-    burst(t, 0.9, 1.4);
-    [880, 932, 1245, 1318, 1661, 1760, 2349].forEach((f) => {
-      const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sawtooth';
-      o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f / 6, t + 1.3); env(g, t, 0.11, 0.01, 1.3); o.connect(g).connect(comp); o.start(t); o.stop(t + 1.4);
+
+    // El susto pega con la cara: master a tope + aflojamos el compresor un instante
+    // para que deje pasar MÁS señal (no solo recortarla). Después todo vuelve a su sitio.
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(1.5, t);
+    master.gain.setTargetAtTime(0.85, t + 2, 0.55);
+    comp.threshold.cancelScheduledValues(t); comp.ratio.cancelScheduledValues(t);
+    comp.threshold.setValueAtTime(-3, t); comp.threshold.setTargetAtTime(-18, t + 2.1, 0.5);
+    comp.ratio.setValueAtTime(2, t); comp.ratio.setTargetAtTime(4, t + 2.1, 0.5);
+
+    // 1) Transitorio seco: el "golpe" de impacto en el instante en que aparece la cara.
+    burst(t, 2.4, 0.6);
+    { const n = noiseSrc(), hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 900; const g = ctx.createGain(); g.gain.setValueAtTime(2.8, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.22); n.connect(hp).connect(g).connect(comp); n.start(t); n.stop(t + 0.26); }
+    // sub doble que cae: te golpea en el pecho
+    [175, 88].forEach((sf, i) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.setValueAtTime(sf, t); o.frequency.exponentialRampToValueAtTime(26 - i * 4, t + 0.65); env(g, t, 2.4 - i * 0.5, 0.001, 1.1); o.connect(g).connect(comp); o.start(t); o.stop(t + 1.2); });
+    // SEGUNDO golpe ~0.3 s después: cuando la cara termina de llenar la pantalla.
+    { const t2 = t + 0.3; burst(t2, 2.1, 0.5); const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.setValueAtTime(140, t2); o.frequency.exponentialRampToValueAtTime(24, t2 + 0.5); env(g, t2, 2.2, 0.001, 0.9); o.connect(g).connect(comp); o.start(t2); o.stop(t2 + 1); }
+
+    // 1b) Retumbe GRAVE y LARGO: el golpe que se queda reverberando en el cuarto.
+    const [rum] = sendBus(1.6);   // dry + mucha cola de reverb
+    { const n = noiseSrc(), lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 85; const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1.7, t + 0.04); g.gain.setTargetAtTime(0.0001, t + 0.35, 1.5); n.connect(lp).connect(g).connect(rum); n.start(t); n.stop(t + 5); }
+    { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.setValueAtTime(55, t); o.frequency.exponentialRampToValueAtTime(19, t + 3); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1.6, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + 4); o.connect(g).connect(rum); o.start(t); o.stop(t + 4.2); }
+
+    // 2) Grito desgarrador: cluster ancho de sierras distorsionadas (WaveShaper) con sub-graves, vibrato brutal.
+    //    Cae más profundo y dura más, con envío a reverb para una cola larga.
+    const curve = new Float32Array(2048);
+    for (let i = 0; i < 2048; i++) { const x = (i / 2048) * 2 - 1; curve[i] = ((3 + 200) * x * 0.4) / (Math.PI + 200 * Math.abs(x)); }
+    const shaper = ctx.createWaveShaper(); shaper.curve = curve; shaper.oversample = '4x';
+    const [scrBus] = sendBus(0.7); const sh = ctx.createGain(); sh.gain.value = 0; shaper.connect(sh).connect(scrBus);
+    const vib = ctx.createOscillator(), vibg = ctx.createGain(); vib.frequency.value = 21; vibg.gain.value = 120; vib.connect(vibg); vib.start(t); vib.stop(t + 2.8);
+    [49, 65, 98, 147, 196, 233, 311, 392, 466, 587, 740].forEach((f) => {
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(f * 3, t); o.frequency.exponentialRampToValueAtTime(f * 0.3, t + 2.4);
+      vibg.connect(o.detune); o.connect(shaper); o.start(t); o.stop(t + 2.7);
     });
-    screech(t, 0.25);
-    const b = ctx.createOscillator(), bg = ctx.createGain(); b.frequency.setValueAtTime(110, t); b.frequency.exponentialRampToValueAtTime(25, t + 1); env(bg, t, 1, 0.005, 1.1); b.connect(bg).connect(comp); b.start(t); b.stop(t + 1.2);
-    silentUntil = t + 3.2;   // y luego: nada. El silencio es peor.
+    sh.gain.setValueAtTime(0, t); sh.gain.linearRampToValueAtTime(2.2, t + 0.012); sh.gain.setValueAtTime(2.2, t + 1.4); sh.gain.exponentialRampToValueAtTime(0.0001, t + 2.7);
+
+    // 3) Doble chirrido agudo encima, al máximo.
+    screech(t, 0.9); screech(t + 0.3, 0.7);
+    silentUntil = t + 5;   // y luego: nada. El silencio es peor.
   }
   function sting() {
     if (!ctx || !on) return; const t = ctx.currentTime; burst(t, 0.7, 0.5); screech(t, 0.18);
